@@ -1,0 +1,15 @@
+#input {
+    width: 90%;
+    height: 100%;
+    text-align: left;
+    font-size: 2em;
+}
+
+#go-btn {
+    width: 10%;
+    height: 2em;
+}
+
+canvas {
+    background-color: black;
+}
