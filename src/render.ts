@@ -13,6 +13,8 @@ export function render(
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#FFFFFF";
 
+    if (opcodes.length === 0) { return; }
+
     function screenToMath(sx: number, sy: number) : [number, number] {
         const wx = sx - Math.floor(canvas.width / 2);
         const wy = Math.floor(canvas.height / 2) - sy;

@@ -6,6 +6,7 @@ import { tokenize } from "./tokenize";
 
 const inputBox: HTMLInputElement = document.getElementById("input") as HTMLInputElement;
 const goButton: HTMLButtonElement = document.getElementById("go-btn") as HTMLButtonElement;
+const resetViewButton: HTMLButtonElement = document.getElementById("reset-view-btn") as HTMLButtonElement;
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement;
 
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -35,13 +36,22 @@ function run() {
     }
 }
 
+function resetView() {
+    if (opcodes.length === 0) { return; }
+    translation = [0, 0];
+    scale = 0.01;
+    render(opcodes, canvas, ctx, translation, scale);
+}
+
 goButton.addEventListener("click", run);
+resetViewButton.addEventListener("click", resetView);
 
 canvas.addEventListener("mousedown", (_) => { isMouseDown = true; });
 canvas.addEventListener("mouseup", (_) => { isMouseDown = false; });
 canvas.addEventListener("mouseenter", (_) => { isMouseDown = false; });
 canvas.addEventListener("mouseleave", (_) => { isMouseDown = false; });
 canvas.addEventListener("mousemove", (e) => {
+    if (opcodes.length === 0) { return; }
     if (isMouseDown) {
         const [dx, dy] = [e.movementX, e.movementY];
         const [tx, ty] = translation;
@@ -50,6 +60,7 @@ canvas.addEventListener("mousemove", (e) => {
     }
 })
 canvas.addEventListener("wheel", (e) => {
+    if (opcodes.length === 0) { return; }
     if (e.deltaY > 0) { 
         scale += 0.0025; 
         scale = Math.min(scale, maxScale);
