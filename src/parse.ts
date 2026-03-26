@@ -2,22 +2,22 @@ import { Err } from "./error";
 import { Op } from "./op";
 import { Token } from "./token";
 
-function parse(tokens: Token.Token[]) : Op.Op[] {
+function parse(tokens: Token.t[]) : Op.t[] {
     let current = 0;
-    const opcodes: Op.Op[] = [];
+    const opcodes: Op.t[] = [];
 
-    function advance() : Token.Token { return tokens[current++]; }
+    function advance() : Token.t { return tokens[current++]; }
 
-    function peek() : Token.Token { return tokens[current]; }
+    function peek() : Token.t { return tokens[current]; }
 
-    function peekPrevious() : Token.Token { return tokens[current-1]; }
+    function peekPrevious() : Token.t { return tokens[current-1]; }
 
-    function eat(token: Token.Token) {
+    function eat(token: Token.t) {
         if (peek().kind === token.kind) {advance(); return;}
         throw Err.ParseErr(peek().loc, `Expected '${Token.toString(token)}' but got '${Token.toString(peek())}'.`)
     }
 
-    function match(tokens: Token.Token[]) : boolean {
+    function match(tokens: Token.t[]) : boolean {
         for (const token of tokens) {
             if (peek().kind === token.kind) {
                 advance(); return true;
@@ -26,7 +26,7 @@ function parse(tokens: Token.Token[]) : Op.Op[] {
         return false;
     }
     
-    function tokenToBinOp(token: Token.Token) : Op.Op {
+    function tokenToBinOp(token: Token.t) : Op.t {
         switch (token.kind) {
             case "Plus": return Op.Add(token.loc);
             case "Equal":
@@ -38,14 +38,14 @@ function parse(tokens: Token.Token[]) : Op.Op[] {
         }
     }
 
-    function tokenToUnOp(token: Token.Token) : Op.Op {
+    function tokenToUnOp(token: Token.t) : Op.t {
         switch (token.kind) {
             case "Minus": return Op.Neg(token.loc);
             default: throw Err.ParseErr(token.loc, `Tried to convert token ${Token.toString(token)} to unary operator.`);
         }
     }
 
-    function tokenToFnOp(token: Token.Token) : Op.Op {
+    function tokenToFnOp(token: Token.t) : Op.t {
         switch (token.kind) {
             case "Sin": return Op.Sin(token.loc);
             case "Cos": return Op.Cos(token.loc);

@@ -142,13 +142,13 @@ namespace Token {
     export const Num = (loc:number, value:number) => 
         {return {kind: "Num" as const, value: value, loc: loc}}
 
-    export type Token = LParen | RParen 
+    export type t = LParen | RParen 
                         | Plus | Minus | Star | Slash | Hat 
                         | Comma | Equal | Eof 
                         | Log | Sin | Cos | Tan | Sqrt
                         | X | Y | Pi | E | Num
 
-    export function toString (token:Token) {
+    export function toString (token:t) {
         switch (token.kind) {
             case "Num": return `${token.value}`;
             case "X": return 'x';

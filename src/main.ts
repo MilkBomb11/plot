@@ -19,7 +19,7 @@ const maxScale = 3;
 
 let isMouseDown = false;
 
-let opcodes: Op.Op[] = [];
+let opcodes: Op.t[] = [];
 
 
 function run() {

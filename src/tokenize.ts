@@ -1,12 +1,12 @@
 import { Err } from "./error";
 import { Token } from "./token";
 
-function tokenize(source:string) : Token.Token[] {
+function tokenize(source:string) : Token.t[] {
     let start: number = 0;
     let current: number = 0;
-    const tokens: Token.Token[] = [];
+    const tokens: Token.t[] = [];
 
-    const keywords: Map<string, (loc: number) => Token.Token> = new Map()
+    const keywords: Map<string, (loc: number) => Token.t> = new Map()
         .set("x", Token.X)
         .set("y", Token.Y)
         .set("e", Token.E)

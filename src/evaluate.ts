@@ -1,7 +1,7 @@
 import { assertUnreachable } from "./helper";
 import type { Op } from "./op";
 
-function evaluate(opcodes: Op.Op[], x: number, y: number) : number | undefined {
+function evaluate(opcodes: Op.t[], x: number, y: number) : number | undefined {
     const stack: number[] = []; 
     for (const opcode of opcodes) {
         switch (opcode.kind) {

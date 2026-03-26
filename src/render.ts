@@ -26,7 +26,7 @@ function initGrids(canvas: HTMLCanvasElement) {
 }
 
 function render (
-    opcodes: Op.Op[], 
+    opcodes: Op.t[], 
     canvas: HTMLCanvasElement, 
     ctx: CanvasRenderingContext2D,
     translation: [number, number], 
