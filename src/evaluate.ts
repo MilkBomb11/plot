@@ -1,60 +1,53 @@
 import { assertUnreachable } from "./helper";
+import { Interval } from "./interval";
 import type { Op } from "./op";
 
-function evaluate(opcodes: Op.t[], x: number, y: number) : number | undefined {
-    const stack: number[] = []; 
+function evaluate(opcodes: Op.t[], x: Interval.t, y: Interval.t) : Interval.t {
+    const stack: Interval.t[] = []; 
     for (const opcode of opcodes) {
         switch (opcode.kind) {
-            case "Num": stack.push(opcode.value); break;
+            case "Num": stack.push(Interval.Interval(opcode.value, opcode.value)); break;
             case "X": stack.push(x); break;
             case "Y": stack.push(y); break;
-            case "Neg": stack.push(-stack.pop()!); break;
-            case "Sin": stack.push(Math.sin(stack.pop()!)); break;
-            case "Cos": stack.push(Math.cos(stack.pop()!)); break;
-            case "Tan": stack.push(Math.tan(stack.pop()!)); break;
-            case "Sqrt": {
-                const operand = stack.pop()!;
-                if (operand < 0) { return undefined; }
-                stack.push(Math.sqrt(operand)); 
-                break;
-            }
+            case "Neg": stack.push(Interval.neg(stack.pop()!)); break;
+            case "Sin": stack.push(Interval.sin(stack.pop()!)); break;
+            case "Cos": stack.push(Interval.cos(stack.pop()!)); break;
+            case "Tan": stack.push(Interval.tan(stack.pop()!)); break;
+            case "Sqrt": stack.push(Interval.sqrt(stack.pop()!)); break;
             case "Add": {
                 const right = stack.pop()!;
                 const left = stack.pop()!;
-                stack.push(left + right);
+                stack.push(Interval.add(left, right));
                 break;
             }
             case "Sub": {
                 const right = stack.pop()!;
                 const left = stack.pop()!;
-                stack.push(left - right);
+                stack.push(Interval.sub(left, right));
                 break;
             }
             case "Mul": {
                 const right = stack.pop()!;
                 const left = stack.pop()!;
-                stack.push(left * right);
+                stack.push(Interval.mul(left, right));
                 break;
             }
             case "Div": {
                 const right = stack.pop()!;
                 const left = stack.pop()!;
-                if (right === 0) { return undefined; }
-                stack.push(left / right);
+                stack.push(Interval.div(left, right));
                 break;
             }
             case "Exp": {
                 const right = stack.pop()!;
                 const left = stack.pop()!;
-                stack.push(left ** right);
+                stack.push(Interval.pow(left, right));
                 break;
             }
             case "Log": {
                 const antiLog = stack.pop()!;
                 const base = stack.pop()!;
-                if (antiLog <= 0) { return undefined; }
-                if (base <= 0 || base === 1) { return undefined; }
-                stack.push(Math.log(antiLog)/Math.log(base))
+                stack.push(Interval.log(base, antiLog));
                 break;
             }
             default: assertUnreachable(opcode);

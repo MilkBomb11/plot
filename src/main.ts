@@ -1,7 +1,7 @@
 import { Err } from "./error";
 import type { Op } from "./op";
 import { parse } from "./parse";
-import { initGrids, render } from "./render";
+import { render } from "./render";
 import { tokenize } from "./tokenize";
 
 const inputBox: HTMLInputElement = document.getElementById("input") as HTMLInputElement;
@@ -35,7 +35,6 @@ function run() {
     }
 }
 
-initGrids(canvas);
 goButton.addEventListener("click", run);
 
 canvas.addEventListener("mousedown", (_) => { isMouseDown = true; });
