@@ -25,5 +25,5 @@ x^2 + y^2 = 1
 
 Multiple functions
 ```
-x^2 + y^2 = 1 ; y = cos x ; y = sinx
+x^2 + y^2 = 1 ; y = cos(x) ; x = sin(y)
 ```
