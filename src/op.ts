@@ -98,7 +98,7 @@ namespace Op {
     export const Sqrt = (loc: number) =>
         { return {kind: "Sqrt" as const, loc: loc}; }
 
-    export type t = Num | X | Y
+    export type T = Num | X | Y
                     | Add | Sub | Mul | Div | Exp 
                     | Neg | Log | Sin | Cos | Tan | Sqrt 
 }

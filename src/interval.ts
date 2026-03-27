@@ -3,17 +3,17 @@ namespace Interval {
         min: number;
         max: number;
     }
-    export type t = Interval;
+    export type T = Interval;
 
     export const Interval = (min: number, max: number) => 
         { return {min: min, max: max}; }
 
-    export function isNaN(interval: t) : boolean { 
+    export function isNaN(interval: T) : boolean { 
         return Number.isNaN(interval.min) 
             || Number.isNaN(interval.max); 
     }
 
-    export function add (a: t, b: t) : t { 
+    export function add (a: T, b: T) : T { 
         if (isNaN(a) || isNaN(b)) return Interval(NaN, NaN);
         const min = a.min + b.min;
         const max = a.max + b.max;
@@ -23,7 +23,7 @@ namespace Interval {
         )
     }
 
-    export function sub (a: t, b: t) : t {
+    export function sub (a: T, b: T) : T {
         if (isNaN(a) || isNaN(b)) return Interval(NaN, NaN);
         const min = a.min - b.max;
         const max = a.max - b.min;
@@ -33,7 +33,7 @@ namespace Interval {
         )
     }
 
-    export function mul (a: t, b: t) : t {
+    export function mul (a: T, b: T) : T {
         if (isNaN(a) || isNaN(b)) return Interval(NaN, NaN);
         if ((a.min === 0 && a.max === 0) || (b.min === 0 && b.max === 0)) {
             return Interval(0, 0);
@@ -51,7 +51,7 @@ namespace Interval {
         );
     }
 
-    export function div (a: t, b: t) : t {
+    export function div (a: T, b: T) : T {
         if (isNaN(a) || isNaN(b)) return Interval(NaN, NaN);
         if (b.min === 0 && b.max === 0) { return Interval(NaN, NaN); }
         if (b.min < 0 && b.max > 0) {
@@ -64,28 +64,28 @@ namespace Interval {
         return mul(a, oneOverB);
     }
 
-    export function neg(a: t) : t {
+    export function neg(a: T) : T {
         if (isNaN(a)) { return Interval(NaN, NaN); }
         return Interval(-a.max, -a.min);
     }
 
-    export function sqrt(a: t) : t {
+    export function sqrt(a: T) : T {
         if (isNaN(a) || a.max < 0) { return Interval(NaN, NaN); }
         const min = a.min < 0 ? 0 : Math.sqrt(a.min);
         return Interval(min, Math.sqrt(a.max));
     }
 
-    function ln(a: t) : t {
+    function ln(a: T) : T {
         if (isNaN(a) || a.max <= 0) { return Interval(NaN, NaN); }
         const min = a.min <= 0 ? -Infinity : Math.log(a.min);
         return Interval(min, Math.log(a.max));
     }
 
-    export function log(base: t, antilog: t) : t {
+    export function log(base: T, antilog: T) : T {
         return div(ln(antilog), ln(base));
     }
 
-    export function pow(base: t, exp: t) : t {
+    export function pow(base: T, exp: T) : T {
         if (isNaN(base) || isNaN(exp)) return Interval(NaN, NaN);
 
         if (exp.min === exp.max && Number.isInteger(exp.min)) {
@@ -120,7 +120,7 @@ namespace Interval {
         return Interval(Math.exp(bTimesLnA.min), Math.exp(bTimesLnA.max));
     }
 
-    export function sin(a: t) : t {
+    export function sin(a: T) : T {
         if (isNaN(a)) return Interval(NaN, NaN);
 
         if (a.max - a.min >= 2*Math.PI) { return Interval(-1, 1); }
@@ -142,12 +142,12 @@ namespace Interval {
         return Interval(min, max);
     }
 
-    export function cos(a: t) : t {
+    export function cos(a: T) : T {
         if (isNaN(a)) return Interval(NaN, NaN);
         return sin(Interval(a.min + Math.PI / 2, a.max + Math.PI / 2));
     }
 
-    export function tan(a: t) : t {
+    export function tan(a: T) : T {
         if (isNaN(a)) return Interval(NaN, NaN);
 
         if (a.max - a.min >= Math.PI) { return Interval(-Infinity, Infinity); }

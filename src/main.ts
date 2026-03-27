@@ -20,15 +20,13 @@ const maxScale = 3;
 
 let isMouseDown = false;
 
-let opcodes: Op.t[] = [];
-
+let opcodes: Array<Op.T[]> = [[]];
 
 function run() {
     try {
         const source = inputBox.value;
         const tokens = tokenize(source);
         opcodes = parse(tokens);
-
         render(opcodes, canvas, ctx, translation, scale);
     } catch (e) {
         const error = e as Err.Err;
@@ -37,7 +35,7 @@ function run() {
 }
 
 function resetView() {
-    if (opcodes.length === 0) { return; }
+    if (opcodes.length === 1 && opcodes[0].length === 0) { return; }
     translation = [0, 0];
     scale = 0.01;
     render(opcodes, canvas, ctx, translation, scale);
@@ -51,7 +49,7 @@ canvas.addEventListener("mouseup", (_) => { isMouseDown = false; });
 canvas.addEventListener("mouseenter", (_) => { isMouseDown = false; });
 canvas.addEventListener("mouseleave", (_) => { isMouseDown = false; });
 canvas.addEventListener("mousemove", (e) => {
-    if (opcodes.length === 0) { return; }
+    if (opcodes.length === 1 && opcodes[0].length === 0) { return; }
     if (isMouseDown) {
         const [dx, dy] = [e.movementX, e.movementY];
         const [tx, ty] = translation;
@@ -60,7 +58,7 @@ canvas.addEventListener("mousemove", (e) => {
     }
 })
 canvas.addEventListener("wheel", (e) => {
-    if (opcodes.length === 0) { return; }
+    if (opcodes.length === 1 && opcodes[0].length === 0) { return; }
     if (e.deltaY > 0) { 
         scale += 0.0025; 
         scale = Math.min(scale, maxScale);

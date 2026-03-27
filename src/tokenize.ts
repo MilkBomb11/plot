@@ -1,12 +1,12 @@
 import { Err } from "./error";
 import { Token } from "./token";
 
-function tokenize(source:string) : Token.t[] {
+function tokenize(source:string) : Token.T[] {
     let start: number = 0;
     let current: number = 0;
-    const tokens: Token.t[] = [];
+    const tokens: Token.T[] = [];
 
-    const keywords: Map<string, (loc: number) => Token.t> = new Map()
+    const keywords: Map<string, (loc: number) => Token.T> = new Map()
         .set("x", Token.X)
         .set("y", Token.Y)
         .set("e", Token.E)
@@ -68,6 +68,7 @@ function tokenize(source:string) : Token.t[] {
             case '*': tokens.push(Token.Star(start)); break;
             case '/': tokens.push(Token.Slash(start)); break;
             case '^': tokens.push(Token.Hat(start)); break;
+            case ';': tokens.push(Token.Semicolon(start)); break;
             case ',': tokens.push(Token.Comma(start)); break;
             case '=': tokens.push(Token.Equal(start)); break;
             case ' ': case '\t': case '\n': case '\r': break;

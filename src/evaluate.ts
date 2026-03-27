@@ -2,8 +2,8 @@ import { assertUnreachable } from "./helper";
 import { Interval } from "./interval";
 import type { Op } from "./op";
 
-function evaluate(opcodes: Op.t[], x: Interval.t, y: Interval.t) : Interval.t {
-    const stack: Interval.t[] = []; 
+function evaluate(opcodes: Op.T[], x: Interval.T, y: Interval.T) : Interval.T {
+    const stack: Interval.T[] = []; 
     for (const opcode of opcodes) {
         switch (opcode.kind) {
             case "Num": stack.push(Interval.Interval(opcode.value, opcode.value)); break;

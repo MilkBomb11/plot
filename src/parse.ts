@@ -2,22 +2,22 @@ import { Err } from "./error";
 import { Op } from "./op";
 import { Token } from "./token";
 
-function parse(tokens: Token.t[]) : Op.t[] {
+function parse(tokens: Token.T[]) : Array<Op.T[]> {
     let current = 0;
-    const opcodes: Op.t[] = [];
+    const opcodes: Array<Op.T[]> = [[]];
 
-    function advance() : Token.t { return tokens[current++]; }
+    function advance() : Token.T { return tokens[current++]; }
 
-    function peek() : Token.t { return tokens[current]; }
+    function peek() : Token.T { return tokens[current]; }
 
-    function peekPrevious() : Token.t { return tokens[current-1]; }
+    function peekPrevious() : Token.T { return tokens[current-1]; }
 
-    function eat(token: Token.t) {
+    function eat(token: Token.T) {
         if (peek().kind === token.kind) {advance(); return;}
         throw Err.ParseErr(peek().loc, `Expected '${Token.toString(token)}' but got '${Token.toString(peek())}'.`)
     }
 
-    function match(tokens: Token.t[]) : boolean {
+    function match(tokens: Token.T[]) : boolean {
         for (const token of tokens) {
             if (peek().kind === token.kind) {
                 advance(); return true;
@@ -25,8 +25,10 @@ function parse(tokens: Token.t[]) : Op.t[] {
         }
         return false;
     }
+
+    function pushOpcode(opcode: Op.T) { opcodes[opcodes.length-1].push(opcode); }
     
-    function tokenToBinOp(token: Token.t) : Op.t {
+    function tokenToBinOp(token: Token.T) : Op.T {
         switch (token.kind) {
             case "Plus": return Op.Add(token.loc);
             case "Equal":
@@ -38,14 +40,14 @@ function parse(tokens: Token.t[]) : Op.t[] {
         }
     }
 
-    function tokenToUnOp(token: Token.t) : Op.t {
+    function tokenToUnOp(token: Token.T) : Op.T {
         switch (token.kind) {
             case "Minus": return Op.Neg(token.loc);
             default: throw Err.ParseErr(token.loc, `Tried to convert token ${Token.toString(token)} to unary operator.`);
         }
     }
 
-    function tokenToFnOp(token: Token.t) : Op.t {
+    function tokenToFnOp(token: Token.T) : Op.T {
         switch (token.kind) {
             case "Sin": return Op.Sin(token.loc);
             case "Cos": return Op.Cos(token.loc);
@@ -56,6 +58,15 @@ function parse(tokens: Token.t[]) : Op.t[] {
         }
     }
 
+    function sequence() {
+        expression();
+        while (match([Token.Semicolon(0)])) {
+            if (match([Token.Eof(0)])) {return;}
+            opcodes.push([]);
+            expression();
+        }
+    }
+
     function expression() { equality(); }
 
     function equality() {
@@ -63,7 +74,7 @@ function parse(tokens: Token.t[]) : Op.t[] {
         eat(Token.Equal(0))
         const op = tokenToBinOp(peekPrevious());
         term();
-        opcodes.push(op);
+        pushOpcode(op);
     }
 
     function term() {
@@ -71,7 +82,7 @@ function parse(tokens: Token.t[]) : Op.t[] {
         while (match([Token.Plus(0), Token.Minus(0)])) {
             const op = tokenToBinOp(peekPrevious());
             factor();
-            opcodes.push(op);
+            pushOpcode(op);
         }
     }
 
@@ -80,7 +91,7 @@ function parse(tokens: Token.t[]) : Op.t[] {
         while (match([Token.Star(0), Token.Slash(0)])) {
             const op = tokenToBinOp(peekPrevious());
             exponent();
-            opcodes.push(op);
+            pushOpcode(op);
         }
     }
 
@@ -89,7 +100,7 @@ function parse(tokens: Token.t[]) : Op.t[] {
         if (match([Token.Hat(0)])) {
             const op = tokenToBinOp(peekPrevious());
             exponent();
-            opcodes.push(op);
+            pushOpcode(op);
         }
     }
 
@@ -97,7 +108,7 @@ function parse(tokens: Token.t[]) : Op.t[] {
         if (match([Token.Minus(0)])) {
             const op = tokenToUnOp(peekPrevious());
             unary();
-            opcodes.push(op);
+            pushOpcode(op);
             return;
         }
         fn();
@@ -111,13 +122,13 @@ function parse(tokens: Token.t[]) : Op.t[] {
             eat(Token.Comma(0));
             term();
             eat(Token.RParen(0));
-            opcodes.push(op);
+            pushOpcode(op);
             return;
         }
         if (match([Token.Sin(0), Token.Cos(0), Token.Tan(0), Token.Sqrt(0)])) {
             const op = tokenToFnOp(peekPrevious());
             unary();
-            opcodes.push(op);
+            pushOpcode(op);
             return;
         }
         primary();
@@ -126,17 +137,17 @@ function parse(tokens: Token.t[]) : Op.t[] {
     function primary() {
         const token = advance();
         switch (token.kind) {
-            case "Num": opcodes.push(Op.Num(token.loc, token.value)); break;
-            case "X": opcodes.push(Op.X(token.loc)); break;
-            case "Y": opcodes.push(Op.Y(token.loc)); break;
-            case "E": opcodes.push(Op.Num(token.loc, Math.E)); break;
-            case "Pi": opcodes.push(Op.Num(token.loc, Math.PI)); break;
+            case "Num": pushOpcode(Op.Num(token.loc, token.value)); break;
+            case "X": pushOpcode(Op.X(token.loc)); break;
+            case "Y": pushOpcode(Op.Y(token.loc)); break;
+            case "E": pushOpcode(Op.Num(token.loc, Math.E)); break;
+            case "Pi": pushOpcode(Op.Num(token.loc, Math.PI)); break;
             case "LParen": term(); eat(Token.RParen(0)); break;
             default: throw Err.ParseErr(token.loc, `Unexpected token '${Token.toString(token)}'`); 
         }
     }
 
-    expression();
+    sequence();
     return opcodes;
 }
 

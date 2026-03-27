@@ -64,6 +64,13 @@ namespace Token {
     export const Equal = (loc:number) => 
         {return {kind: "Equal" as const, loc: loc}}
 
+    interface Semicolon {
+        kind: "Semicolon";
+        loc: number;
+    }
+    export const Semicolon = (loc:number) => 
+        {return {kind: "Semicolon" as const, loc: loc}}
+
     interface Eof {
         kind: "Eof";
         loc: number;
@@ -142,13 +149,13 @@ namespace Token {
     export const Num = (loc:number, value:number) => 
         {return {kind: "Num" as const, value: value, loc: loc}}
 
-    export type t = LParen | RParen 
+    export type T = LParen | RParen 
                         | Plus | Minus | Star | Slash | Hat 
-                        | Comma | Equal | Eof 
+                        | Comma | Equal | Semicolon | Eof 
                         | Log | Sin | Cos | Tan | Sqrt
                         | X | Y | Pi | E | Num
 
-    export function toString (token:t) {
+    export function toString (token:T) {
         switch (token.kind) {
             case "Num": return `${token.value}`;
             case "X": return 'x';
@@ -164,6 +171,7 @@ namespace Token {
             case "LParen": return '(';
             case "RParen": return ')';
             case "Comma": return ',';
+            case "Semicolon": return ';';
             case "Log": return "log";
             case "Sin": return "sin";
             case "Cos": return "cos";
