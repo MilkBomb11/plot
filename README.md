@@ -1,5 +1,6 @@
 # PLOT
-2d graph plotter
+2d graph plotter.
+You can play around with it [here](https://milkbomb11.github.io/plot/).
 
 ## Examples
 Exponential functions
